@@ -9,7 +9,7 @@ public class CartRequest {
     @Min(value = 1,message = "Please enter a valid product id")
     private Long productId;
 
-    @Size(min = 1, max = 99, message = "Quantity of product should be between 1-99")
+    @Min(1)
     private int quantity;
 
     public Long getProductId() {

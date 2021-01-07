@@ -14,6 +14,6 @@ public interface CartService {
 
     public Cart increaseCartElement(Long elemId, Integer amount, UserDetailsImp currentUser);
 
-//    Cart decreaseCartElement(Long elemId, Integer amount, UserDetailsImpl currentUser);
+    Cart decreaseCartElement(Long elemId, Integer amount, UserDetailsImp currentUser);
 //    void deleteElementFromCart(Long id, UserDetailsImpl userDetails);
 }

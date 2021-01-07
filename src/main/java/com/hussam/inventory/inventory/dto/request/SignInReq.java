@@ -9,7 +9,7 @@ public class SignInReq {
     private String username;
 
     @NotBlank
-    @Size(min = 6, max = 30)
+    @Size(min = 8, max = 30)
     private String password;
 
     public String getUsername() {

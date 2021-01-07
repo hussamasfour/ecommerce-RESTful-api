@@ -9,6 +9,7 @@ import com.hussam.inventory.inventory.security.services.UserDetailsImp;
 
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
 
@@ -26,7 +27,7 @@ public interface UserService {
 
     boolean existByEmail(String email);
 
-
+    Optional<User> getUserByUsername(String username);
 
     User updateUser(User user);
 

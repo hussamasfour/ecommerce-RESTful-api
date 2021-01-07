@@ -11,8 +11,11 @@ import com.hussam.inventory.inventory.service.CartService;
 import com.hussam.inventory.inventory.service.OrderService;
 import com.hussam.inventory.inventory.service.ProductService;
 import com.hussam.inventory.inventory.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.ArrayList;
@@ -23,32 +26,31 @@ import java.util.Optional;
 @Service
 public class OrderServiceImp implements OrderService {
 
-    @Autowired
-    private OrderRepository orderRepository;
+    private static final Logger  LOGGER = LoggerFactory.getLogger(OrderServiceImp.class);
 
     @Autowired
-    private UserRepository userRepository;
+    private OrderRepository orderRepository;
 
     @Autowired
     private UserService userService;
 
     @Autowired
     private CartService cartService;
+
     @Autowired
     private ProductService productService;
+
     @Override
-    public Optional<List<Order>> getById(UserDetailsImp user) {
-        User user1  = userRepository.findByEmail(user.getEmail()).get();
+    public Optional<List<Order>> getAllOrdersByUser(UserDetailsImp currentUser) {
+        LOGGER.info("Getting logged in user info");
+        User user  = userService.getUserById(currentUser.getId());
 
-        return orderRepository.findByUser(user1);
-
+        LOGGER.info("Getting orders for user");
+        return orderRepository.findByUser(user);
     }
-
 
     @Override
     public void delete(Long id, UserDetailsImp currentUser) {
-
-
         orderRepository.deleteById(id);
     }
 
@@ -58,15 +60,18 @@ public class OrderServiceImp implements OrderService {
     }
 
     @Override
+    @Transactional
     public Order createOrder(UserDetailsImp currentUser) {
         if(currentUser == null){
             throw  new NotFoundException("Please sign in first");
         }
 
+        LOGGER.info("Fetching logged in user" );
         User user = userService.getUserById(currentUser.getId());
         Cart cart = user.getCart();
 
         if(cart == null){
+            LOGGER.error("Error: The cart is empty");
             throw new NotFoundException("Error: Your cart is empty");
         }
 
@@ -85,7 +90,7 @@ public class OrderServiceImp implements OrderService {
             Product product  = cartElement.getProduct();
 
             if(cartElement.getQuantity() > product.getAmount()){
-                throw new InvalidArgumentException("This item is out of stuck");
+                throw new InvalidArgumentException("the requested quantity for "+ cartElement.getProduct().getName() +" is bigger than what in stock");
             }
 
             OrderDetails orderDetails = new OrderDetails();
@@ -95,19 +100,21 @@ public class OrderServiceImp implements OrderService {
             newOrder.getOrderDetailsList().add(orderDetails);
 
             product.setAmount(product.getAmount()-cartElement.getQuantity());
-
+            LOGGER.info("Updating products quantity in the database");
             productService.update(product);
         }
-
+        LOGGER.info("Clearing the cart");
         cartService.clearCart(currentUser);
-
+        LOGGER.info("Saving the new order to the database");
         return orderRepository.save(newOrder);
 
     }
 
     @Override
     public Optional<Order> getOrderById(Long id, UserDetailsImp currentUser) {
+        LOGGER.info("Fetching logged in user");
         User user  = userService.getUserById(currentUser.getId());
+        LOGGER.info("Getting order for id: "+ id);
         return orderRepository.findOrderByIdAndAndUser(id, user);
     }
 

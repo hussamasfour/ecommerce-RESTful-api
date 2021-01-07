@@ -7,12 +7,12 @@ public class ExceptionResponse {
 
     private Date timestamp;
     private String message;
-    private String details;
+    private String path;
 
-    public ExceptionResponse(Date timestamp, String message,String details) {
+    public ExceptionResponse(Date timestamp, String message,String path) {
         this.timestamp = timestamp;
         this.message = message;
-        this.details = details;
+        this.path = path;
     }
 
     public Date getTimestamp() {
@@ -24,6 +24,6 @@ public class ExceptionResponse {
     }
 
     public String getDetails() {
-        return details;
+        return path;
     }
 }

@@ -3,6 +3,8 @@ package com.hussam.inventory.inventory.controllers;
 import com.hussam.inventory.inventory.entities.Product;
 import com.hussam.inventory.inventory.exception.NotFoundException;
 import com.hussam.inventory.inventory.service.ProductService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,12 +19,14 @@ import java.util.Optional;
 @RequestMapping("/products")
 @CrossOrigin
 public class ProductController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductController.class);
 
     @Autowired
     private ProductService productService;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getProductByIdFromCategory(@PathVariable("id") Long id, @RequestParam("category") String categoryName) {
+        LOGGER.info("Inside getProductByIdFromCategory()");
         Optional<Product> product = productService.getProductByIdAndCategory(id,categoryName);
         if(!product.isPresent()){
             throw new NotFoundException("Product with id: "+ id + " not available");
@@ -33,13 +37,16 @@ public class ProductController {
     @PostMapping("/")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Product> addNewProduct(@Valid @RequestBody Product product, @RequestParam("category") String category){
+        LOGGER.info("Inside addNewProduct()");
         Product newProduct = productService.add(product, category);
         return new ResponseEntity<>(newProduct, HttpStatus.CREATED);
     }
 
     @GetMapping("/")
-    public ResponseEntity<?> getAllProductInSelectedCategory(@RequestParam("category") String categoryName){
-        List<Product> products =  productService.getAllByCategory(categoryName);
+    public ResponseEntity<?> getAllProductsInSelectedCategory(@RequestParam("category") String categoryName){
+        LOGGER.info("Inside getAllProductsInSelectedCategory()");
+        List<Product> products = productService.getAllByCategory(categoryName);
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
+
 }

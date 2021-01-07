@@ -20,7 +20,7 @@ public class Cart {
     private List<CartElement> cartElementList;
 
     @JsonIgnore
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

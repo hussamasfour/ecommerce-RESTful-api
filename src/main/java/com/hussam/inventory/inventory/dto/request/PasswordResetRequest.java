@@ -7,15 +7,15 @@ import javax.validation.constraints.Size;
 public class PasswordResetRequest {
 
     @NotBlank
-    @Size(min = 8, max = 30, message = "password must be between 8-30 length")
+    @Size(min = 8, max = 30, message = "Password must be between 8-30 length")
     private String oldPassword;
 
     @NotBlank
-    @Size(min = 8,max = 30, message = "password must be between 8-30 length")
+    @Size(min = 8,max = 30, message = "Password must be between 8-30 length")
     private String newPassword;
 
     @NotBlank
-    @Size(min = 8,max = 30, message = "password must be between 8-30 length")
+    @Size(min = 8,max = 30, message = "Password must be between 8-30 length")
     private String newPasswordConfirm;
 
     public String getOldPassword() {

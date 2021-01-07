@@ -18,7 +18,7 @@ public class Product {
     @Size(min = 3, max = 30, message = "Please enter a valid name")
     private String name;
 
-    @NotEmpty(message = "Product's sku must have not be empty!")
+    @NotEmpty(message = "Product's sku must not be empty!")
     @Column(name = "sku")
     private String sku;
 
